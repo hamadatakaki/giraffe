@@ -1,2 +1,7 @@
+# for Rust
 /target
 **/*.rs.bk
+
+# for Python
+.venv/
+
