@@ -36,8 +36,5 @@ def cat_file(path: str):
 
 
 if __name__ == '__main__':
-    testblobpath = '/Users/hamada/develop/giraffe/.git/objects/e7/a11a969c037e00a796aafeff6258501ec15e9a'
-    testcommitpath = '/Users/hamada/develop/giraffe/.git/objects/cd/f7e6cbf6a5b18c2c189f9c2b934cbc6632e647'
-    cat_file(testblobpath)
-    print()
-    cat_file(testcommitpath)
+    cat_file(paths['blob'])
+    cat_file(paths['commit'])
