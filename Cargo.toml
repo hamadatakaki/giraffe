@@ -5,3 +5,4 @@ authors = ["hamadatakaki <i16hamadat@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+libflate = "0.1"
