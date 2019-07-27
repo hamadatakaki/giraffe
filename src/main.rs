@@ -1,3 +1,6 @@
+pub mod cat_file;
+
 fn main() {
-    println!("Hello, world!");
+    cat_file::cat_file("./repo/blobobj");
+    cat_file::cat_file_verbose("./repo/commitobj");
 }
