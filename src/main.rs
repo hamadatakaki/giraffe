@@ -1,6 +1,6 @@
-pub mod cat_file;
+pub mod details;
 
 fn main() {
-    cat_file::cat_file("./repo/blobobj");
-    cat_file::cat_file_verbose("./repo/commitobj");
+    details::cat_file("./repo/blobobj");
+    details::cat_file_verbose("./repo/commitobj");
 }

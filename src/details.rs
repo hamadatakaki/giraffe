@@ -9,10 +9,10 @@ struct StoredObject {
 }
 
 impl StoredObject {
-    fn new(body: String, object_type: String, length: u32) -> Self {
+    fn new(body: String, obj_type: String, length: u32) -> Self {
         Self {
             body: body,
-            object_type: object_type,
+            object_type: obj_type,
             length: length
         }
     }
@@ -39,7 +39,7 @@ fn make_object_from_path(path: &str) -> Result<StoredObject, Box<std::error::Err
     let body_bytes = decompressed.split_off(index);
     let body = String::from_utf8(body_bytes).unwrap();
 
-    // extract kind of object and source length.
+    // extract object-type and source length.
     let header = String::from_utf8(decompressed).unwrap();
     let devided_header: Vec<&str> = header.split(" ").collect();
     let obj_type = devided_header[0].to_string();
@@ -55,6 +55,6 @@ pub fn cat_file(path: &str) {
 
 pub fn cat_file_verbose(path: &str) {
     let stored = make_object_from_path(path).unwrap();
-    println!("object type: {}, length{len:>3}", stored.object_type, len=stored.length);
+    println!("object type: {}, length: {len:>3}", stored.object_type, len=stored.length);
     print!("{}", stored.body);
 }
