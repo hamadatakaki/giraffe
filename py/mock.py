@@ -25,12 +25,27 @@ class DataStruct:
 
 
 class IndexStruct:
-    def __init__(self, b: bytearray):
-        pass
+    def __init__(self, version: int, entry_number: int, enrtries=[]):
+        self.version = version
+        self.entry_number = entry_number
+        self.entries = enrtries
+
+    def add_entry(self, entry):
+        self.entries.append(entry)
 
 class IndexEntryStruct:
-    def __init__(self, ctime: float, mtime: float):
-        pass
+    def __init__(self, ctime: float, mtime: float, dev: int, inode: int, 
+                mode: str, uid: int, guid: int, size: int, sha1: str, name: str):
+        self.ctime = ctime
+        self.mtime = mtime
+        self.dev = dev
+        self.inode = inode
+        self.mode = mode
+        self.uid = uid
+        self.guid = guid
+        self.size = size
+        self.sha1 = sha1
+        self.name = name
 
 
 def get_bytes_struct_from_path(path: str):
@@ -54,6 +69,10 @@ def is_index_file(b: bytearray):
     return b == b'DIRC'
 
 
+def analyze_index_header(header: bytearray):
+    return int.from_bytes(header[0:4], 'big'), int.from_bytes(header[4:8], 'big')
+
+
 def convert_unixtime(byte_vec):
     sec_byte = byte_vec[:4]
     nano_byte = byte_vec[4:]
@@ -69,8 +88,8 @@ def analyze_index(path: str):
     assert is_index_file(b[:4])
 
     header, body = b[4:12], b[12:]
-    version, entry = analyze_index_header(header)
-    print(entry)
+    version, entry_number = analyze_index_header(header)
+    index_struct = IndexStruct(version, entry_number)
 
     i = 0
     c = 0
@@ -101,17 +120,25 @@ def analyze_index(path: str):
         padding_size = 8 - (6+name_len)%8
         i += padding_size
 
-        print(ctime, mtime, dev, inode, mode, uid, guid, size, sha1, name_len, name, padding_size)
+        new_entry = IndexEntryStruct(ctime, mtime, dev, inode, mode, uid, guid, size, sha1, name)
+        index_struct.add_entry(new_entry)
 
-        if c == entry:
+        if c == entry_number:
             break
 
-    print(body[i:i+20].hex())
+    return index_struct
 
 
-def analyze_index_header(header: bytearray):
-    return int.from_bytes(header[0:4], 'big'), int.from_bytes(header[4:8], 'big')
+def ls_files(index):
+    for e in index.entries:
+        print(f'{e.name}')
+
+
+def ls_files_stage(index):
+    for e in index.entries:
+        print(f'{e.mode} {e.sha1}\t{e.name}')
 
 
 if __name__ == '__main__':
-    analyze_index(paths['index'])
+    index = analyze_index(paths['index'])
+    ls_files(index)
