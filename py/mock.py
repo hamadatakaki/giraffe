@@ -72,44 +72,41 @@ def analyze_index(path: str):
     version, entry = analyze_index_header(header)
     print(entry)
 
-    try:
-        i = 0
-        c = 0
-        while(True):
-            c += 1
-            ctime = convert_unixtime(body[i:i+8])
-            i += 8
-            mtime = convert_unixtime(body[i:i+8])
-            i += 8
-            dev = body[i:i+4]
-            i += 4
-            inode = body[i:i+4]
-            i += 4
-            mode = int.from_bytes(body[i:i+4], 'big')
-            i += 4
-            uid = int.from_bytes(body[i:i+4], 'big')
-            i += 4
-            guid = int.from_bytes(body[i:i+4], 'big')
-            i += 4
-            size = int.from_bytes(body[i:i+4], 'big')
-            i += 4
-            sha1 = body[i:i+20].hex()
-            i += 20
-            name_len = int.from_bytes(body[i:i+2], 'big')
-            i += 2
-            name = body[i:i+name_len]
-            i += name_len
-            padding_size = 8 - (2+name_len)%8
-            i += padding_size
+    i = 0
+    c = 0
+    while(True):
+        c += 1
+        ctime = convert_unixtime(body[i:i+8])
+        i += 8
+        mtime = convert_unixtime(body[i:i+8])
+        i += 8
+        dev = int.from_bytes(body[i:i+4], 'big')
+        i += 4
+        inode = int.from_bytes(body[i:i+4], 'big')
+        i += 4
+        mode = format(int.from_bytes(body[i:i+4], 'big'), 'o')
+        i += 4
+        uid = int.from_bytes(body[i:i+4], 'big')
+        i += 4
+        guid = int.from_bytes(body[i:i+4], 'big')
+        i += 4
+        size = int.from_bytes(body[i:i+4], 'big')
+        i += 4
+        sha1 = body[i:i+20].hex()
+        i += 20
+        name_len = int.from_bytes(body[i:i+2], 'big')
+        i += 2
+        name = body[i:i+name_len].decode()
+        i += name_len
+        padding_size = 8 - (6+name_len)%8
+        i += padding_size
 
-            print(ctime, mtime, dev, inode, mode, uid, guid, size, sha1, name_len, name, padding_size)
+        print(ctime, mtime, dev, inode, mode, uid, guid, size, sha1, name_len, name, padding_size)
 
-            if body[i:i+4] == b'TREE' or c > entry:
-                break
-    except UnicodeDecodeError:
-        print(c, i)
-        exit(1)
+        if c == entry:
+            break
 
+    print(body[i:i+20].hex())
 
 
 def analyze_index_header(header: bytearray):
