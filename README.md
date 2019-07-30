@@ -8,6 +8,7 @@ writer & commiter: hamadatakaki (a.k.a. jellyfish_rumble) <mail: i16hamadat@gmai
 
 ## function
 
-- cat-file: `git cat-file -p <obj hash>`
+- cat-file: As git, `git cat-file -p <obj hash>`
   - Giraffe can show the data of Git blob object and Git commit object.
-
+- ls-files: As git, `git ls-files`
+  - show the current project status.
