@@ -61,10 +61,6 @@ def cat_file(path: str):
     print(bd.body, end='')
 
 
-def ls_files(path: str):
-    pass
-
-
 def is_index_file(b: bytearray):
     return b == b'DIRC'
 
