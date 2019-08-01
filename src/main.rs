@@ -1,8 +1,7 @@
 extern crate giraffe;
-use crate::giraffe::details::{cat_file, cat_file_verbose};
+use crate::giraffe::details::{cat_file, cat_file_verbose, ls_files};
 
 fn main() -> Result<(), Box<std::error::Error>> {
-    cat_file("./repo/blobobj")?;
-    cat_file_verbose("./repo/commitobj")?;
+    ls_files("./repo/index")?;
     Ok(())
 }
