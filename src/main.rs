@@ -1,7 +1,7 @@
 extern crate giraffe;
-use crate::giraffe::details::{cat_file, cat_file_verbose, ls_files};
+use crate::giraffe::command::ls_files_stage;
 
 fn main() -> Result<(), Box<std::error::Error>> {
-    ls_files("./repo/index")?;
+    ls_files_stage("./repo/index")?;
     Ok(())
 }
