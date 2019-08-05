@@ -93,11 +93,19 @@ impl Index {
 
 impl Index {
     fn analyze_header(header: &[u8]) -> Result<(u32, u32), Box<std::error::Error>> {
-        let (version_bytes, entry_number_bytes) = header.split_at(4);
-        let version_str = std::str::from_utf8(version_bytes)?;
-        let entry_number_str = std::str::from_utf8(entry_number_bytes)?;
-        let version = version_str.parse()?;
-        let entry_number = entry_number_str.parse()?;
+        let (mut version_bytes, mut entry_number_bytes) = header.split_at(4);
+
+        let version = version_bytes.read_u32::<BigEndian>()?;
+        let entry_number = entry_number_bytes.read_u32::<BigEndian>()?;
         Ok((version, entry_number))
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_convert_byte_to_number() {
+        
     }
 }
