@@ -1,7 +1,7 @@
-pub mod details;
+extern crate giraffe;
+use crate::giraffe::command::ls_files_stage;
 
 fn main() -> Result<(), Box<std::error::Error>> {
-    details::cat_file("./repo/blobobj")?;
-    details::cat_file_verbose("./repo/commitobj")?;
+    ls_files_stage("./repo/index")?;
     Ok(())
 }
