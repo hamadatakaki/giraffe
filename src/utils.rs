@@ -17,3 +17,25 @@ pub fn decompress_zlib(compressed: Vec<u8>) -> Result<Vec<u8>, Box<std::error::E
 
     Ok(decompressed)
 }
+
+pub fn parse_from_vec_u8(vec: &[u8]) -> u32 {
+    let mut reverced_vec: Vec<u32> = Vec::new();
+    for u in vec {
+        reverced_vec.push(*u as u32);
+    }
+
+    let mut i = 0;
+    let mut sum = 0;
+
+    loop {
+        let num: u32 = reverced_vec.pop().unwrap();
+        sum += num * 8u32.pow(i);
+        i += 1;
+
+        if reverced_vec.is_empty() {
+            break;
+        }
+    }
+
+    sum
+}
