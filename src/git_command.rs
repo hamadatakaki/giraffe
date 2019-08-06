@@ -1,5 +1,5 @@
-use super::objects::compressed::StoredObject;
-use super::objects::index::Index;
+use super::for_git::objects::compressed::StoredObject;
+use super::for_git::objects::index::Index;
 
 // Self::new(
 //     csec, cnano, msec, mnano, dev, inode, 
