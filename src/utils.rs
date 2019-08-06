@@ -39,3 +39,7 @@ pub fn parse_from_vec_u8(vec: &[u8]) -> u32 {
 
     sum
 }
+
+pub fn fill_0_u8(u: u8) -> String {
+    format!("{:>02}", format!("{:x}", u)).replace(" ", "0")
+}

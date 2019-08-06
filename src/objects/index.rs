@@ -1,4 +1,4 @@
-use crate::utils::{read_file_all, parse_from_vec_u8};
+use crate::utils::{read_file_all, parse_from_vec_u8, fill_0_u8};
 use super::entry::Entry;
 
 use byteorder::{BigEndian, ReadBytesExt};
@@ -50,38 +50,23 @@ impl Index {
             let (sha1, body) = body.split_at(20);
 
             let ctime_sec = ctime_sec.read_u32::<BigEndian>()? as i64;
-            println!("{:?}", ctime_sec);
             let ctime_nano = ctime_nano.read_u32::<BigEndian>()?;
-            println!("{:?}", ctime_nano);
             let mtime_sec = mtime_sec.read_u32::<BigEndian>()? as i64;
-            println!("{:?}", mtime_sec);
             let mtime_nano = mtime_nano.read_u32::<BigEndian>()?;
-            println!("{:?}", mtime_nano);
             let dev = dev.read_u32::<BigEndian>()?;
-            println!("dev{:?}", dev);
             let mode_u32 = mode.read_u32::<BigEndian>()?;
             let mode = format!("{:o}", mode_u32);
-            println!("mode{:?}", mode);
             let inode = inode.read_u32::<BigEndian>()?;
-            println!("{:?}", inode);
             let uid = uid.read_u32::<BigEndian>()?;
-            println!("uid{:?}", uid);
             let guid = guid.read_u32::<BigEndian>()?;
-            println!("{:?}", guid);
             let size = size.read_u32::<BigEndian>()?;
-            println!("{:?}", size);
-            let sha1 = sha1.iter().map(|x| format!("{:x}", x)).collect::<String>();
-            println!("sha1 {:?}", sha1);
+            let sha1 = sha1.iter().map(|x| fill_0_u8(*x)).collect::<String>();
 
             let (name_length, body) = body.split_at(2);
-            println!("hoge");
             let name_length = parse_from_vec_u8(name_length) as usize;
-            println!("len {:?}", name_length);
             let (name, body) = body.split_at(name_length);
             let name = std::str::from_utf8(name)?.to_string();
-            println!("name {:?}", name);
             let (_padding, body) = body.split_at(8-(6+name_length)%8);
-            println!("pad {:?}", _padding);
             _body = body;
 
             let entry = Entry::new(ctime_sec, ctime_nano, mtime_sec, mtime_nano, dev, inode, mode, uid, guid, size, sha1, name);
@@ -111,14 +96,5 @@ impl Index {
         let version = version_bytes.read_u32::<BigEndian>()?;
         let entry_number = entry_number_bytes.read_u32::<BigEndian>()?;
         Ok((version, entry_number))
-    }
-}
-
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_convert_byte_to_number() {
-        
     }
 }
