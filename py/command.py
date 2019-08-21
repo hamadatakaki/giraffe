@@ -28,5 +28,8 @@ def ls_files_stage(path):
         print(f'{e.mode} {e.sha1}\t{e.name}')
 
 
+# TODO: https://gitlab.com/hamadatakaki/giraffe/issues/1 as Python
+
+
 if __name__ == '__main__':
     ls_files_stage(paths['index'])
