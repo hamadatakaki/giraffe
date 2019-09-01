@@ -44,12 +44,3 @@ pub fn parse_from_vec_u8(vec: &[u8]) -> u32 {
 pub fn fill_0_u8(u: u8) -> String {
     format!("{:>02}", format!("{:x}", u)).replace(" ", "0")
 }
-
-pub fn generate_file(path: String, body: String, mode: u32) -> Result<(), std::io::Error> {
-    let mut file = File::create(path)?;
-    write!(file, "{}", body)?;
-    let mut permissions = file.metadata()?.permissions();
-
-    permissions.set_mode(mode);
-    file.set_permissions(permissions)
-}
