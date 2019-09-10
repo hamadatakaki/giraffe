@@ -1,33 +1,25 @@
-#[cfg(test)]
-mod tests {
-    use giraffe;
-    use std::fs;
-    use std::path::Path;
+// mod settings;
 
-    #[test]
-    fn test_init_not_initialized() {
-        let repo_path = Path::new("./.repo");
+// #[cfg(test)]
+// mod tests {
+//     use giraffe;
+//     use std::fs;
+//     use std::path::Path;
 
-        if repo_path.exists() {
-            fs::remove_dir_all(repo_path);
-        }
+//     use crate::settings::tests_command_initialize;
 
-        assert_eq!(giraffe::command::init().unwrap(), 0);
+//     #[test]
+//     fn test_init_not_initialized() {
+//         tests_command_initialize::initialize_for_init_not_initialized();
+//         assert_eq!(giraffe::command::init().unwrap(), 0);
+//         fs::remove_dir_all("./.repo");
+//     }
 
-        fs::remove_dir_all(repo_path);
-    }
-
-    #[test]
-    fn test_init_already_initialized() -> std::io::Result<()> {
-        fs::create_dir_all("./.repo/objects")?;
-        fs::create_dir_all("./.repo/refs/heads")?;
-        fs::write(".repo/HEAD", "refs/heads/master\n")?;
-        fs::write(".repo/refs/heads/master", "")?;
-
-        assert_eq!(giraffe::command::init().unwrap(), 1);
-
-        fs::remove_dir_all("./.repo");
-
-        Ok(())
-    }
-}
+//     #[test]
+//     fn test_init_already_initialized() -> std::io::Result<()> {
+//         tests_command_initialize::initialize_for_init_already_initialized()?;
+//         assert_eq!(giraffe::command::init().unwrap(), 1);
+//         fs::remove_dir_all("./.repo");
+//         Ok(())
+//     }
+// }
