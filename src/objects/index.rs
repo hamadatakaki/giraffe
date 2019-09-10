@@ -38,8 +38,7 @@ impl Index {
             let (mut mode, body) = _body.split_at(4);
             let (sha1, body) = body.split_at(20);
 
-            let mode_u32 = mode.read_u32::<BigEndian>()?;
-            let mode = format!("{:o}", mode_u32);
+            let mode_u32 = (mode.read_u32::<BigEndian>()?) - 2u32.pow(15);
             let sha1 = sha1.iter().map(|x| fill_0_u8(*x)).collect::<String>();
 
             let (name_length, body) = body.split_at(2);
@@ -49,7 +48,7 @@ impl Index {
             let (_padding, body) = body.split_at(8-(6+name_length)%8);
             _body = body;
 
-            let entry = Entry::new(mode, sha1, name);
+            let entry = Entry::new(mode_u32, sha1, name);
             entries.push(entry);
             c += 1;
 
