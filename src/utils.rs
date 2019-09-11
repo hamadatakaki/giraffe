@@ -1,6 +1,5 @@
 use std::fs::File;
-use std::io::{Read, Write};
-use std::os::unix::fs::PermissionsExt;
+use std::io::Read;
 use libflate::zlib;
 
 pub fn read_file_all(path: &str) -> Result<Vec<u8>, Box<std::error::Error>> {
