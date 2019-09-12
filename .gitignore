@@ -8,3 +8,5 @@
 # for Dirty code
 tests/test_dirty.rs
 
+# for giraffe
+experiment/

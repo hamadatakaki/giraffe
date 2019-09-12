@@ -7,9 +7,13 @@ enum ObjectType {
     Commit
 }
 
-#[allow(dead_code)]
-pub struct StoredObject {
-    body: String,
-    object_type: ObjectType,
-    length: u32
+// #[allow(dead_code)]
+// pub struct StoredObject {
+//     body: String,
+//     object_type: ObjectType,
+//     length: u32
+// }
+
+pub trait GenerateByteFile {
+    fn encode_for_object(&self);
 }
