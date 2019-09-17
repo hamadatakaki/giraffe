@@ -1,5 +1,5 @@
 use crate::utils::{parse_from_vec_u8, fill_0_u8};
-use super::entry::{Entry, Mode};
+use super::entry::Entry;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -35,12 +35,9 @@ impl Index {
         let mut c: u32 = 0;
 
         loop {
-            let (mut mode, body) = _body.split_at(4);
-            let (sha1, body) = body.split_at(20);
+            let (sha1, body) = _body.split_at(20);
 
             // TODO: Consider how to save object's mode.
-            let mode_u32 = mode.read_u32::<BigEndian>()?;
-            let mode = Mode::new(mode_u32, false);
             let sha1 = sha1.iter().map(|x| fill_0_u8(*x)).collect::<String>();
 
             let (name_length, body) = body.split_at(2);
@@ -50,7 +47,7 @@ impl Index {
             let (_padding, body) = body.split_at(8-(6+name_length)%8);
             _body = body;
 
-            let entry = Entry::new(mode, sha1, name);
+            let entry = Entry::new(sha1, name);
             entries.push(entry);
             c += 1;
 
