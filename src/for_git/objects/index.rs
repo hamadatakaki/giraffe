@@ -1,4 +1,5 @@
 use crate::utils::{read_file_all, parse_from_vec_u8, fill_0_u8};
+use std::path::Path;
 use super::entry::Entry;
 
 use byteorder::{BigEndian, ReadBytesExt};
@@ -24,7 +25,7 @@ impl Index {
         }
     }
 
-    pub fn make_object_from_path(path: &str) -> Result<Self, Box<std::error::Error>> {
+    pub fn make_object_from_path(path: &Path) -> Result<Self, Box<std::error::Error>> {
         let buf = read_file_all(path)?;
         let (identifer, header_and_body) = buf.split_at(4);
 

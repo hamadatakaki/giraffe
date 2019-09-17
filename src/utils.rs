@@ -1,8 +1,9 @@
 use std::fs::File;
 use std::io::Read;
+use std::path::Path;
 use libflate::zlib;
 
-pub fn read_file_all(path: &str) -> Result<Vec<u8>, Box<std::error::Error>> {
+pub fn read_file_all(path: &Path) -> Result<Vec<u8>, Box<std::error::Error>> {
     // Read file
     let mut file = File::open(path)?;
     let mut buf = Vec::new();
