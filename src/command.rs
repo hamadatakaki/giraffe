@@ -2,6 +2,9 @@ use std::fs::{create_dir_all, read_dir};
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
+use super::objects::blob::Blob;
+use super::objects::compressed::GiraffeObject;
+
 pub fn init() -> std::io::Result<i32> {
     let repo_path = Path::new("./experiment/.repo");
 
@@ -42,12 +45,15 @@ fn visit_dirs(path: &Path) -> std::io::Result<()> {
 }
 
 fn rec_visit_dirs(path: &Path) -> std::io::Result<()> {
+    // TODO: 2. Make blob object one by one.
     for entry in read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
-        let metadata = entry.metadata()?;
-        println!("{:?}", path);
-        println!("{:?}", metadata.permissions().mode());
+        if !path.is_dir() {
+            let blob = Blob::create_object(&path).unwrap();
+            let obj = blob.encode_to_entry();
+            println!("{}", String::from_utf8(obj).unwrap());
+        }
         if path_valid(&path) {
             rec_visit_dirs(&path)?;
         }

@@ -1,4 +1,4 @@
-// use crate::utils::{decompress_zlib, read_file_all};
+use std::path::Path;
 
 #[allow(dead_code)]
 enum ObjectType {
@@ -14,6 +14,8 @@ enum ObjectType {
 //     length: u32
 // }
 
-pub trait GenerateByteFile {
-    fn encode_for_object(&self);
+pub trait GiraffeObject {
+    fn encode_to_object(&self) -> Vec<u8>;
+    fn encode_to_entry(&self) -> Vec<u8>;
+    fn generate_path_string(&self) -> String;
 }

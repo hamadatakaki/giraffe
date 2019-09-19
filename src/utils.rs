@@ -44,3 +44,18 @@ pub fn parse_from_vec_u8(vec: &[u8]) -> u32 {
 pub fn fill_0_u8(u: u8) -> String {
     format!("{:>02}", format!("{:x}", u)).replace(" ", "0")
 }
+
+pub fn normalize_name_length(name_length: usize) -> Vec<u8> {
+    // 2byteに前方を0埋めしたlengthを突っ込む
+    let mut vec = Vec::new();
+    vec.push((name_length / 16) as u8);
+    vec.push((name_length % 16) as u8);
+    vec
+}
+
+pub fn fill_0_for_index(name_len: usize) -> Vec<u8> {
+    let pad_num = 8 - (6+name_len)%8;
+    let mut vec = Vec::new();
+    vec.resize(pad_num, 0);
+    vec
+}
