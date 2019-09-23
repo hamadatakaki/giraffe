@@ -1,9 +1,10 @@
-use std::fs::{create_dir_all, read_dir};
-use std::os::unix::fs::PermissionsExt;
+use std::fs::{create_dir_all, read_dir, File};
+use std::io::Write;
 use std::path::Path;
 
 use super::objects::blob::Blob;
 use super::objects::compressed::GiraffeObject;
+use super::utils::create_file_with_path;
 
 pub fn init() -> std::io::Result<i32> {
     let repo_path = Path::new("./experiment/.repo");
@@ -26,7 +27,9 @@ pub fn first_add() -> std::io::Result<()> {
     // write(".repo/HEAD", "refs/heads/master\n")?;
 
     // 1. Get all directory and file information recursively
-    visit_dirs(Path::new("./experiment"))?;
+    let vec = visit_dirs(Path::new("./experiment"))?;
+    let mut index = File::create("./experiment/.repo/index")?;
+    index.write_all(&vec)?;
 
     Ok(())
 }
@@ -37,26 +40,34 @@ fn path_valid(path: &Path) -> bool {
     path.is_dir() && !ignore_path_str.contains(&(path.to_str().unwrap()))
 }
 
-fn visit_dirs(path: &Path) -> std::io::Result<()> {
+fn visit_dirs(path: &Path) -> std::io::Result<Vec<u8>> {
+    let mut vec = Vec::new();
     if path_valid(path) {
-        rec_visit_dirs(path)?;
+        vec.append(&mut rec_visit_dirs(path)?);
     }
-    Ok(())
+    Ok(vec)
 }
 
-fn rec_visit_dirs(path: &Path) -> std::io::Result<()> {
+fn rec_visit_dirs(path: &Path) -> std::io::Result<Vec<u8>> {
+    let mut vec = Vec::new();
     // TODO: 2. Make blob object one by one.
     for entry in read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
+        println!("{:?}", path);
         if !path.is_dir() {
             let blob = Blob::create_object(&path).unwrap();
-            let obj = blob.encode_to_entry();
-            println!("{}", String::from_utf8(obj).unwrap());
+            let obj = blob.encode_to_object();
+            let path_str = blob.generate_path_string();
+            let path = Path::new(path_str.as_str());
+            create_file_with_path(path, obj)?;
+            let mut entry = blob.encode_to_entry();
+            vec.append(&mut entry);
         }
         if path_valid(&path) {
-            rec_visit_dirs(&path)?;
+            let mut dirs_vec = rec_visit_dirs(&path)?;
+            vec.append(&mut dirs_vec);
         }
     }
-    Ok(())
+    Ok(vec)
 }

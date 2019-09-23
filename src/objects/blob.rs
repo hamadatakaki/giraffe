@@ -17,7 +17,7 @@ impl Blob {
         }
     }
 
-    pub fn create_object(path: &Path) -> Result<Self, Box<std::error::Error>> {
+    pub fn create_object(path: &Path) -> std::io::Result<Self> {
         let buf = read_file_all(path)?;
         let file_name = path.file_name().unwrap()
                             .to_str().unwrap();
@@ -51,6 +51,6 @@ impl GiraffeObject for Blob {
     fn generate_path_string(&self) -> String {
         let mut path = self.hash.clone();
         path.insert_str(2, "/");
-        format!(".repo/objects/{}", path)
+        format!("./experiment/.repo/objects/{}", path)
     }
 }
