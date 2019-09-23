@@ -1,7 +1,7 @@
 extern crate giraffe;
-use crate::giraffe::git_command;
+use crate::giraffe::command;
 
-fn main() -> Result<(), Box<std::error::Error>> {
-    git_command::ls_files_stage("./repo/index")?;
+fn main() -> Result<(), std::io::Error> {
+    command::first_add()?;
     Ok(())
 }

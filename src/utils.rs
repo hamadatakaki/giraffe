@@ -1,9 +1,9 @@
-use std::fs::File;
+use std::fs::{create_dir_all, File};
 use std::io::{Read, Write};
-use std::os::unix::fs::PermissionsExt;
+use std::path::Path;
 use libflate::zlib;
 
-pub fn read_file_all(path: &str) -> Result<Vec<u8>, Box<std::error::Error>> {
+pub fn read_file_all(path: &Path) -> std::io::Result<Vec<u8>> {
     // Read file
     let mut file = File::open(path)?;
     let mut buf = Vec::new();
@@ -11,7 +11,7 @@ pub fn read_file_all(path: &str) -> Result<Vec<u8>, Box<std::error::Error>> {
     Ok(buf)
 }
 
-pub fn decompress_zlib(compressed: Vec<u8>) -> Result<Vec<u8>, Box<std::error::Error>> {
+pub fn decompress_zlib(compressed: Vec<u8>) -> std::io::Result<Vec<u8>> {
     let mut decoder = zlib::Decoder::new(&compressed[..])?;
     let mut decompressed = Vec::new();
     decoder.read_to_end(&mut decompressed)?;
@@ -45,11 +45,25 @@ pub fn fill_0_u8(u: u8) -> String {
     format!("{:>02}", format!("{:x}", u)).replace(" ", "0")
 }
 
-pub fn generate_file(path: String, body: String, mode: u32) -> Result<(), std::io::Error> {
-    let mut file = File::create(path)?;
-    write!(file, "{}", body)?;
-    let mut permissions = file.metadata()?.permissions();
+pub fn normalize_name_length(name_length: usize) -> Vec<u8> {
+    // 2byteに前方を0埋めしたlengthを突っ込む
+    let mut vec = Vec::new();
+    vec.push((name_length / 16) as u8);
+    vec.push((name_length % 16) as u8);
+    vec
+}
 
-    permissions.set_mode(mode);
-    file.set_permissions(permissions)
+pub fn fill_0_for_index(name_len: usize) -> Vec<u8> {
+    let pad_num = 8 - (6+name_len)%8;
+    let mut vec = Vec::new();
+    vec.resize(pad_num, 0);
+    vec
+}
+
+pub fn create_file_with_path(path: &Path, body: Vec<u8>) -> std::io::Result<()> {
+    let parent = path.parent().unwrap();
+    create_dir_all(parent)?;
+    let mut file = File::create(path)?;
+    file.write_all(&body)?;
+    Ok(())
 }

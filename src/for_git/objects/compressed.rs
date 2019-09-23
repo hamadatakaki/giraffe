@@ -1,4 +1,5 @@
 use crate::utils::{decompress_zlib, read_file_all};
+use std::path::Path;
 
 pub struct StoredObject {
     body: String,
@@ -15,7 +16,7 @@ impl StoredObject {
         }
     }
 
-    pub fn make_object_from_path(path: &str) -> Result<Self, Box<std::error::Error>> {
+    pub fn make_object_from_path(path: &Path) -> Result<Self, Box<std::error::Error>> {
         // Read file & decompress zlib
         let buf = read_file_all(path)?;
         let decompressed = decompress_zlib(buf)?;
