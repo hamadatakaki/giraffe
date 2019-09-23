@@ -54,7 +54,6 @@ fn rec_visit_dirs(path: &Path) -> std::io::Result<Vec<u8>> {
     for entry in read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
-        println!("{:?}", path);
         if !path.is_dir() {
             let blob = Blob::create_object(&path).unwrap();
             let obj = blob.encode_to_object();
