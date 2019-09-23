@@ -1,5 +1,3 @@
-use std::path::Path;
-
 #[allow(dead_code)]
 enum ObjectType {
     Blob,
