@@ -4,7 +4,7 @@ use std::path::Path;
 
 use super::objects::blob::Blob;
 use super::objects::compressed::GiraffeObject;
-use super::utils::create_file_with_path;
+use super::utils::iosc;
 
 pub fn init() -> std::io::Result<i32> {
     let repo_path = Path::new("./experiment/.repo");
@@ -59,7 +59,7 @@ fn rec_visit_dirs(path: &Path) -> std::io::Result<Vec<u8>> {
             let obj = blob.encode_to_object();
             let path_str = blob.generate_path_string();
             let path = Path::new(path_str.as_str());
-            create_file_with_path(path, obj)?;
+            iosc::create_file(path, obj)?;
             let mut entry = blob.encode_to_entry();
             vec.append(&mut entry);
         }

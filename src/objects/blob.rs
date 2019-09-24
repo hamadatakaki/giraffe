@@ -1,7 +1,8 @@
 use crypto::digest::Digest;
 use crypto::sha1::Sha1;
 use std::path::Path;
-use crate::utils::{fill_0_for_index, read_file_all, normalize_name_length};
+
+use super::super::utils::{iosc, normalize};
 use super::compressed::GiraffeObject;
 
 pub struct Blob {
@@ -18,7 +19,7 @@ impl Blob {
     }
 
     pub fn create_object(path: &Path) -> std::io::Result<Self> {
-        let buf = read_file_all(path)?;
+        let buf = iosc::read_file(path)?;
         let file_name = path.file_name().unwrap()
                             .to_str().unwrap();
         let mut hasher = Sha1::new();
@@ -42,9 +43,9 @@ impl GiraffeObject for Blob {
 
     fn encode_to_entry(&self) -> Vec<u8> {
         let mut vec: Vec<u8> = self.hash.clone().into_bytes();
-        vec.append(&mut normalize_name_length(self.name.len()));
+        vec.append(&mut normalize::name_length_of_entry(self.name.len()));
         vec.append(&mut self.name.clone().into_bytes());
-        vec.append(&mut fill_0_for_index(self.name.len()));
+        vec.append(&mut normalize::zero_filled_of_entry(self.name.len()));
         vec
     }
 

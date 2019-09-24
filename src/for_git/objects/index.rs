@@ -1,4 +1,5 @@
-use crate::utils::{read_file_all, parse_from_vec_u8, fill_0_u8};
+use crate::utils::iosc;
+use crate::utils::normalize::{parse_to_u32_from_vec_u8, convert_to_hex};
 use std::path::Path;
 use super::entry::Entry;
 
@@ -26,7 +27,7 @@ impl Index {
     }
 
     pub fn make_object_from_path(path: &Path) -> Result<Self, Box<std::error::Error>> {
-        let buf = read_file_all(path)?;
+        let buf = iosc::read_file(path)?;
         let (identifer, header_and_body) = buf.split_at(4);
 
         assert!(is_index(identifer.to_vec()));
@@ -61,10 +62,10 @@ impl Index {
             let uid = uid.read_u32::<BigEndian>()?;
             let guid = guid.read_u32::<BigEndian>()?;
             let size = size.read_u32::<BigEndian>()?;
-            let sha1 = sha1.iter().map(|x| fill_0_u8(*x)).collect::<String>();
+            let sha1 = sha1.iter().map(|x| convert_to_hex(*x)).collect::<String>();
 
             let (name_length, body) = body.split_at(2);
-            let name_length = parse_from_vec_u8(name_length) as usize;
+            let name_length = parse_to_u32_from_vec_u8(name_length.to_vec().as_mut()) as usize;
             let (name, body) = body.split_at(name_length);
             let name = std::str::from_utf8(name)?.to_string();
             let (_padding, body) = body.split_at(8-(6+name_length)%8);
